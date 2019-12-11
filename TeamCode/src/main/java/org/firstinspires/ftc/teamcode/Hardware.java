@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hardware {
 
-    public DcMotor LT;
-    public DcMotor LB;
-    public DcMotor RT;
-    public DcMotor RB;
+    public DcMotor LTMotor;
+    public DcMotor LBMotor;
+    public DcMotor RTMotor;
+    public DcMotor RBMotor;
 
     public DcMotor lift1;
     public DcMotor lift2;
@@ -30,12 +30,12 @@ public class Hardware {
 
     public void init() {
 
-        /*
-        LT = hardwareMap.get(DcMotor.class, "LT");
-        LB = hardwareMap.get(DcMotor.class, "LB");
-        RT = hardwareMap.get(DcMotor.class, "RT");
-        RB = hardwareMap.get(DcMotor.class, "RB");
-         */
+
+        LTMotor = hardwareMap.get(DcMotor.class, "LTMotor");
+        LBMotor = hardwareMap.get(DcMotor.class, "LBMotor");
+        RTMotor = hardwareMap.get(DcMotor.class, "RTMotor");
+        RBMotor = hardwareMap.get(DcMotor.class, "RBMotor");
+
 
         lift1 = hardwareMap.get(DcMotor.class, "lift1");
         lift2 = hardwareMap.get(DcMotor.class, "lift2");
@@ -45,15 +45,15 @@ public class Hardware {
         servo3 = hardwareMap.get(Servo.class, "servo3");
         servo4 = hardwareMap.get(Servo.class, "servo4");
 
-        /*
-        LT.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RT.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        RT.setDirection(DcMotor.Direction.REVERSE);
-        LT.setDirection(DcMotor.Direction.REVERSE);
-         */
+        LTMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RTMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        RTMotor.setDirection(DcMotor.Direction.REVERSE);
+        LTMotor.setDirection(DcMotor.Direction.REVERSE);
+
 
         lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -63,4 +63,12 @@ public class Hardware {
 
         lift2.setDirection(DcMotor.Direction.REVERSE);
     }
+
+    public void OpenPower(double p1, double p2, double p3, double p4) {
+        LTMotor.setPower(p1);
+        LBMotor.setPower(p2);
+        RTMotor.setPower(p3);
+        RBMotor.setPower(p4);
+    }
+
 }
