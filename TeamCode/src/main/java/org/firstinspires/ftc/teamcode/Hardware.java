@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,12 +15,15 @@ public class Hardware {
     public DcMotor RBMotor;
 
     public DcMotor lift1;
-    public DcMotor lift2;
 
     public Servo servo1;
     public Servo servo2;
     public Servo servo3;
     public Servo servo4;
+
+    public Servo servo5;
+    public Servo servo6;
+
 
     HardwareMap hardwareMap;
 
@@ -38,12 +42,14 @@ public class Hardware {
 
 
         lift1 = hardwareMap.get(DcMotor.class, "lift1");
-        lift2 = hardwareMap.get(DcMotor.class, "lift2");
 
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
         servo3 = hardwareMap.get(Servo.class, "servo3");
         servo4 = hardwareMap.get(Servo.class, "servo4");
+
+        servo5 = hardwareMap.get(Servo.class, "servo5");
+        servo6 = hardwareMap.get(Servo.class, "servo6");
 
 
         LTMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -56,12 +62,8 @@ public class Hardware {
 
 
         lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        lift2.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void OpenPower(double p1, double p2, double p3, double p4) {

@@ -105,7 +105,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
         telemetry.addData("lift1: ", r.lift1.getCurrentPosition());
         telemetry.addData("lift2: ", r.lift2.getCurrentPosition());
         telemetry.update();
-        //
 
         }
     }
