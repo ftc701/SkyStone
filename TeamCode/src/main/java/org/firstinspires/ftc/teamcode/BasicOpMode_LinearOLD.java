@@ -23,7 +23,7 @@ public class BasicOpMode_LinearOLD extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
-
+/*
         if (gamepad1.dpad_up && runtime.milliseconds() > 40) {
             double newPosition = r.servo1.getPosition() + 0.05;
             newPosition = Range.clip(newPosition, 0, 1);
@@ -40,7 +40,8 @@ public class BasicOpMode_LinearOLD extends LinearOpMode {
             runtime.reset();
             runtime.reset();
         }
-
+*/
+/*
             if (gamepad2.x) {
                 r.lift1.setTargetPosition(-2000);
                 r.lift2.setTargetPosition(-2000);
@@ -67,6 +68,7 @@ public class BasicOpMode_LinearOLD extends LinearOpMode {
                     }
                 }
             }
+
  {
                         double newPosition = r.servo1.getPosition() + 0.05;
                         newPosition = Range.clip(newPosition, 0, 1);
@@ -94,16 +96,16 @@ public class BasicOpMode_LinearOLD extends LinearOpMode {
                     }
                 }
             }
-
-        r.servo3.setPosition(r.servo1.getPosition());
+*/
+       // r.servo3.setPosition(r.servo1.getPosition());
 
         r.lift1.setPower(gamepad1.left_stick_y);
-        r.lift2.setPower(gamepad1.left_stick_y);
+       // r.lift2.setPower(gamepad1.left_stick_y);
 
-        telemetry.addData("servo1: ", r.servo1.getPosition());
-        telemetry.addData("servo2: ", r.servo2.getPosition());
+       // telemetry.addData("servo1: ", r.servo1.getPosition());
+       // telemetry.addData("servo2: ", r.servo2.getPosition());
         telemetry.addData("lift1: ", r.lift1.getCurrentPosition());
-        telemetry.addData("lift2: ", r.lift2.getCurrentPosition());
+      //  telemetry.addData("lift2: ", r.lift2.getCurrentPosition());
         telemetry.update();
         //
 

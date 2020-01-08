@@ -24,9 +24,10 @@ public class TeleOpTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+
             float LTMotorDC = -gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
             float LBMotorDC = -gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
-            float RTMotorDC = -gamepad1.left_stick_y + gamepad1.left_stick_x +gamepad1.right_stick_x;
+            float RTMotorDC = -gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x;
             float RBMotorDC = -gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x;
 
             float largestVal = 1.0f;

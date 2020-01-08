@@ -177,7 +177,9 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
 
           //  r.servo3.setPosition(0.289360 * r.ArmAngle.getVoltage() - 0.188);
-            r.servo3.setPosition(((0.75 - 0)/(2.112 - 0.045) * (r.ArmAngle.getVoltage() - 0.045)));
+            double[] coord1 = {0.75, 2.112};
+            double[] coord2 = {0, 0.045};
+            r.servo3.setPosition(r.mapFunction(r.ArmAngle.getVoltage(), coord1, coord2));
 
             //(2.157,
 

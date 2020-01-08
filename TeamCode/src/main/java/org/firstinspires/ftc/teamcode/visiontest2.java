@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.opencv.core.Core;
-import org.opencv.core.KeyPoint;
+import org.opencv.core.CvException;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -16,31 +16,18 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp(name="visionTest", group="Hardware Test")
-public class SampleLogicNew extends LinearOpMode
+@TeleOp(name="visionTest2", group="Hardware Test")
+public class visiontest2 extends LinearOpMode
 {
     OpenCvCamera phoneCam;
+    int massL;
+    int massC;
+    int massR;
 
-    int massL = 0;
-    int massC = 0;
-    int massR = 0;
-    boolean frameNeeded = false;
-    String TAG = "Stuff";
-    
-    //JavaCameraView view = getCameraView();
-    /*
-    int RectX = 160;
-    int RectY = 640;
-    int RectW = 240;
-    int RectH = 213;
-    */
-    int RectP1X = 100;
-    int RectP1Y = 10;
-    int RectP2X = 200;
-    int RectP2Y = 200;
+    static int width = 320;
+    static int height = 240;
 
-    int massOfRectangleFrame = 2814135;
-    int massOfTextFrame = 2085;
+    //240 x 320
 
     @Override
     public void runOpMode()
@@ -82,7 +69,7 @@ public class SampleLogicNew extends LinearOpMode
          * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
          * away from the user.
          */
-        phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        phoneCam.startStreaming(width, height, OpenCvCameraRotation.UPRIGHT);
 
         /*
          * Wait for the user to press start on the Driver Station
@@ -100,6 +87,9 @@ public class SampleLogicNew extends LinearOpMode
             telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
             telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
             telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
+            telemetry.addData("massL: ", massL);
+            telemetry.addData("massC: ", massC);
+            telemetry.addData("massR: ", massR);
             telemetry.update();
 
             /*
@@ -187,17 +177,35 @@ public class SampleLogicNew extends LinearOpMode
          * by forgetting to call mat.release(), and it also reduces memory pressure by not
          * constantly allocating and freeing large chunks of memory.
          */
-
         Mat hsvThresholdInput = new Mat();
         Mat cvErodeSrc = new Mat();
         Mat cvDilateSrc = new Mat();
         Mat cvErodeKernel = new Mat();
         Mat cvDilateKernel = new Mat();
+        Mat display = new Mat();
+
+        Mat maskL = new Mat();
+        Mat maskC = new Mat();
+        Mat maskR = new Mat();
+
+        Mat cropL = new Mat();
+        Mat cropC = new Mat();
+        Mat cropR = new Mat();
+
+        Rect rectL = new Rect(new Point(0, 0), new Point(height/2, width*(1f/3f)));
+        Rect rectC = new Rect(new Point(0, width * (1f/3f)), new Point(height/2, width * (2f/3f)));
+        Rect rectR = new Rect(new Point(0, width * (2f/3f)), new Point(height/2, width));
 
         @Override
         public Mat processFrame(Mat input)
         {
-
+            /*
+             * IMPORTANT NOTE: the input Mat that is passed in as a parameter to this method
+             * will only dereference to the same image for the duration of this particular
+             * invocation of this method. That is, if for some reason you'd like to save a copy
+             * of this particular frame for later use, you will need to either clone it or copy
+             * it to another Mat.
+             */
             hsvThresholdInput = input;
             double[] hsvThresholdHue = {0.0, 45.0};
             double[] hsvThresholdSaturation = {173.0, 245.0};
@@ -219,36 +227,31 @@ public class SampleLogicNew extends LinearOpMode
             int cvDilateBordertype = Core.BORDER_DEFAULT;
             Scalar cvDilateBordervalue = new Scalar(-1);
             cvDilate(cvDilateSrc, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue, cvDilateSrc);
+            display = cvDilateSrc;
 
-            hsvThresholdInput.release();
-            cvErodeSrc.release();
-            cvErodeKernel.release();
-            cvDilateKernel.release();
-            cvDilateSrc.release();
-            return cvDilateSrc; // display the image seen by the camera
-
-            /*
-             * IMPORTANT NOTE: the input Mat that is passed in as a parameter to this method
-             * will only dereference to the same image for the duration of this particular
-             * invocation of this method. That is, if for some reason you'd like to save a copy
-             * of this particular frame for later use, you will need to either clone it or copy
-             * it to another Mat.
-             */
-
-            /*
-             * Draw a simple box around the middle 1/2 of the entire frame
-             *//*
+            //For the Sake of Debugging
             Imgproc.rectangle(
-                    input,
-                    new Point(
-                            input.cols()/4,
-                            input.rows()/4),
-                    new Point(
-                            input.cols()*(3f/4f),
-                            input.rows()*(3f/4f)),
-                    new Scalar(0, 255, 0), 4);
-            */
+                    display, rectL,
+                    new Scalar(255, 255, 255), 1);
 
+            Imgproc.rectangle(
+                    display, rectC,
+                    new Scalar(255, 255, 255), 1);
+
+            Imgproc.rectangle(
+                    display, rectR,
+                    new Scalar(255, 255, 255), 1);
+
+
+            //Coord 1 = (279, 0)
+            //Coord 2 = (12800, 100)
+
+            double[] coord1 = {997, 0};
+            double[] coord2 = {12495, 100};
+
+            massL = (int) mapFunction(Core.countNonZero(cvDilateSrc.submat(rectL)), coord1, coord2);
+            massC = (int) mapFunction(Core.countNonZero(cvDilateSrc.submat(rectC)), coord1, coord2);
+            massR = (int) mapFunction(Core.countNonZero(cvDilateSrc.submat(rectR)), coord1, coord2);
 
 
             /**
@@ -257,23 +260,8 @@ public class SampleLogicNew extends LinearOpMode
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
 
+            return display;
         }
-    }
-    /*
-    public void colSumMassLocation(Mat frameIntial, Mat input, Mat output) {
-
-
-        // frameNeeded = false;
-        Thread schedulerThread = new Thread(scheduler);
-        schedulerThread.start();
-
-
-    }
-    */
-
-    public int returnTotalMass(){
-        return massL;
-        //- massOfRectangleFrame - massOfTextFrame;
     }
 
     /**
@@ -339,69 +327,22 @@ public class SampleLogicNew extends LinearOpMode
         Imgproc.dilate(src, dst, kernel, anchor, (int)iterations, borderType, borderValue);
     }
 
-    public void changeRectP1X(int size) {
-        RectP1X = size;
-    }
-    public void changeRectP1Y(int size) {
-        RectP1Y = size;
-    }
-    public void changeRectP2X(int size) {
-        RectP2X = size;
-    }
-    public void changeRectP2Y(int size) {
-        RectP2Y = size;
-    }
+    public double mapFunction(double xVal, double[] coord1, double[] coord2)  {
 
-    public int getRectP1X() {
-        return RectP1X;
+        double x1 = coord1[0];
+        double x2 = coord2[0];
+
+        double y1 = coord1[1];
+        double y2 = coord2[1];
+
+        //0.75, 2.112
+        //0, 0.045
+        //y  = ((0.75 - 0)/(2.112 - 0.045) * (x - 0.045)
+        //y  = (y1 - y2)/(x1 - x2) * (xVal - x2) + y2
+        //y = mx + b
+        //b = (y1) - (y1 - y2)/(x1 - x2) * x1
+        //y = ((y1 - y2)/(x1 - x2)) * r.ArmAngle.getVoltage + ((y1) - (y1 - y2)/(x1 - x2) * x1)
+
+        return ((y1 - y2)/(x1 - x2)) * xVal + ((y1) - (y1 - y2)/(x1 - x2) * x1);
     }
-    public int getRectP1Y() {
-        return RectP1Y;
-    }
-    public int getRectP2X() {
-        return RectP2X;
-    }
-    public int getRectP2Y() {
-        return RectP2Y;
-    }
-
-    public void changeRect(int RecP1X, int RecP1Y, int RecP2X, int RecP2Y) {
-        changeRectP1X(RecP1X);
-        changeRectP1Y(RecP1Y);
-        changeRectP2X(RecP2X);
-        changeRectP2Y(RecP2Y);
-    }
-/*
-    Runnable scheduler = new Runnable() {
-
-        @Override
-        public void run() {
-
-            massL = 0;
-            Rect rectCrop = new Rect(new Point(RectP1X + 2, RectP1Y + 2),
-                    new Point(RectP2X - 2, RectP2Y - 2));
-            //RectX,RectY,RectW,RectH
-            //new Point(RectX,  RectH), new Point(RectW, RectY)
-            //new Point(0,  213), new Point(480, 427)
-            final Mat in = cvDilateSrc.submat(rectCrop);
-
-            massL = 0;
-            massC = 0;
-            massR = 0;
-            Core.reduce(in, colSumOutput, 0, Core.REDUCE_SUM, 4);
-            for (int x = 0; x <= frameFinal.cols(); x++) {
-                int[] data = new int[3];
-                colSumOutput.get(0, x, data);
-                massL += data[0];
-            }
-
-            in.release();
-            colSumOutput.release();
-            frameNeeded = false;
-
-        }
-    };
-    */
-
 }
-

@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
 
 public class Hardware {
@@ -16,14 +22,17 @@ public class Hardware {
 
     public DcMotor lift1;
 
-    public Servo servo1;
-    public Servo servo2;
+    public CRServo servo1;
+    public CRServo servo2;
     public Servo servo3;
     public Servo servo4;
 
     public Servo servo5;
     public Servo servo6;
 
+    public AnalogInput ArmAngle;
+
+    VisionPipeline vision = new VisionPipeline();
 
     HardwareMap hardwareMap;
 
@@ -43,13 +52,15 @@ public class Hardware {
 
         lift1 = hardwareMap.get(DcMotor.class, "lift1");
 
-        servo1 = hardwareMap.get(Servo.class, "servo1");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
+        servo1 = hardwareMap.get(CRServo.class, "servo1");
+        servo2 = hardwareMap.get(CRServo.class, "servo2");
         servo3 = hardwareMap.get(Servo.class, "servo3");
         servo4 = hardwareMap.get(Servo.class, "servo4");
 
         servo5 = hardwareMap.get(Servo.class, "servo5");
         servo6 = hardwareMap.get(Servo.class, "servo6");
+
+        ArmAngle = hardwareMap.get(AnalogInput.class, "potem");
 
 
         LTMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -71,6 +82,55 @@ public class Hardware {
         LBMotor.setPower(p2);
         RTMotor.setPower(p3);
         RBMotor.setPower(p4);
+    }
+
+    public double mapFunction(double xVal, double[] coord1, double[] coord2)  {
+
+        double x1 = coord1[0];
+        double x2 = coord2[0];
+
+        double y1 = coord1[1];
+        double y2 = coord2[1];
+
+        //0.75, 2.112
+        //0, 0.045
+        //y  = ((0.75 - 0)/(2.112 - 0.045) * (x - 0.045)
+        //y  = (y1 - y2)/(x1 - x2) * (xVal - x2) + y2
+        //y = mx + b
+        //b = (y1) - (y1 - y2)/(x1 - x2) * x1
+        //y = ((y1 - y2)/(x1 - x2)) * r.ArmAngle.getVoltage + ((y1) - (y1 - y2)/(x1 - x2) * x1)
+
+        return ((y1 - y2)/(x1 - x2)) * xVal + ((y1) - (y1 - y2)/(x1 - x2) * x1);
+    }
+
+    public int SkyStoneLocation(){
+        int location = 1; //Default
+
+        int L = vision.getMassL();
+        int C = vision.getMassC();
+        int R = vision.getMassR();
+
+        if (L > C && L > R){
+            location = 1;
+        } else if (C > L && C > R){
+            location = 2;
+        } else if (R > C && R > L){
+            location = 3;
+        }
+
+        return location;
+    }
+
+    public void startVision(){
+        OpenCvCamera phoneCam;
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        phoneCam.openCameraDevice();
+
+        phoneCam.setPipeline(vision);
+
+        phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
     }
 
 }
