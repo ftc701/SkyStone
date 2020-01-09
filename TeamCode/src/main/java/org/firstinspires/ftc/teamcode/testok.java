@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Hardware Test", group="Hardware Test")
-public class BasicOpMode_Linear extends LinearOpMode {
+@TeleOp(name="testok", group="Hardware Test")
+public class testok extends LinearOpMode {
 
     private DcMotor LTMotor;
     private DcMotor LBMotor;
@@ -133,11 +133,11 @@ public class BasicOpMode_Linear extends LinearOpMode {
         //r.servo3.setPosition(r.servo1.getPosition());
 */
 
-       // r.servo1.setPosition(gamepad2.left_stick_y * 0.5 + 0.5);
-       // r.servo2.setPosition(gamepad2.left_stick_y  * 0.5 + 0.5);
+            // r.servo1.setPosition(gamepad2.left_stick_y * 0.5 + 0.5);
+            // r.servo2.setPosition(gamepad2.left_stick_y  * 0.5 + 0.5);
 
-           r.servo1.setPower(gamepad2.left_stick_y);
-           r.servo2.setPower(gamepad2.left_stick_y);
+            r.servo1.setPower(gamepad2.left_stick_y);
+            r.servo2.setPower(gamepad2.left_stick_y);
 
 /*
             if (runtime.milliseconds() > 10) {
@@ -156,13 +156,13 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
                 r.servo1.setPower(P);
                 r.servo2.setPower(P);
-
 */
+
 //0.75, 2.112
             //0, 0.045
             //y  = ((0.75 - 0)/(2.112 - 0.045) * (x - 0.045)
 
-        //lift1.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+          //   lift1.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
             if (gamepad2.dpad_down && runtime.milliseconds() > 10) {
                 double newPosition = r.servo3.getPosition() - 0.01;
@@ -178,17 +178,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 runtime.reset();
             }
 
-            //2.133, 0.77
-            //0.158, 0
-            //
-
-            //r.servo3.setPosition(0.289360 * r.ArmAngle.getVoltage() - 0.188);
-           // double[] coord1 = {0.75, 2.112};
-           // double[] coord2 = {0, 0.045};
-            double[] coord1 = {2.153, 0.76};
-            double[] coord2 = {0.247, 0};
-            r.servo3.setPosition(r.mapFunction(r.ArmAngle.getVoltage(), coord1, coord2));
-
+            r.servo3.setPosition(0.289360 * r.ArmAngle.getVoltage() - 0.188);
+            // r.servo3.setPosition(((0.75 - 0)/(2.112 - 0.045) * (r.ArmAngle.getVoltage() - 0.045)));
 
             //(2.157,
 
@@ -206,8 +197,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 r.servo6.setPosition(0.7);
             }
 
-          //  y\ =\ 0.287360\cdot x\ -0.188
-         //   y = 3.4799 * x + 0.566
+            //  y\ =\ 0.287360\cdot x\ -0.188
+            //   y = 3.4799 * x + 0.566
 
             LTMotor.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x) * 1);
             LBMotor.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x) * 1);
@@ -216,6 +207,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             intake1.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
             intake2.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+
 
             if (gamepad2.x && runtime.milliseconds() > 120) {
                 if (level < 10) {
@@ -235,13 +227,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 runtime.reset();
             }
 
+
             if (gamepad2.dpad_up && runtime.milliseconds() > 40) {
-                lift1.setTargetPosition(lift1.getCurrentPosition() + 40);
+                lift1.setTargetPosition(lift1.getCurrentPosition() - 40);
                 lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 lift1.setPower(1);
                 runtime.reset();
             } else if (gamepad2.dpad_down && runtime.milliseconds() > 40) {
-                lift1.setTargetPosition(lift1.getCurrentPosition() - 40);
+                lift1.setTargetPosition(lift1.getCurrentPosition() + 40);
                 lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 lift1.setPower(1);
                 runtime.reset();
@@ -249,13 +242,17 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
 
             telemetry.addData("Potem", r.ArmAngle.getVoltage());
-            telemetry.addData("servo1: ", r.servo1.getPower());
-            telemetry.addData("servo2: ", r.servo2.getPower());
+            //   telemetry.addData("servo1: ", r.servo1.getPower());
+            //   telemetry.addData("servo2: ", r.servo2.getPower());
             telemetry.addData("servo3: ", r.servo3.getPosition());
             telemetry.addData("servo4: ", r.servo4.getPosition());
+            //  telemetry.addData("lift1: ", r.lift1.getCurrentPosition());
+            //  telemetry.addData("lift2: ", r.lift2.getCurrentPosition());
             telemetry.addData("level: ", level);
-            telemetry.addData("Lift Pos: ", r.lift1.getCurrentPosition());
+            telemetry.addData("Lift Pos: ", lift1.getCurrentPosition());
+            telemetry.addData("Lift Target: ", lift1.getTargetPosition());
             telemetry.update();
+
         }
     }
 }

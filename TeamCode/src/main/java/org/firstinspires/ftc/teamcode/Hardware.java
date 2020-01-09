@@ -60,7 +60,7 @@ public class Hardware {
         servo5 = hardwareMap.get(Servo.class, "servo5");
         servo6 = hardwareMap.get(Servo.class, "servo6");
 
-        ArmAngle = hardwareMap.get(AnalogInput.class, "potem");
+        ArmAngle = hardwareMap.get(AnalogInput.class, "poten");
 
 
         LTMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
